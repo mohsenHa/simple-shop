@@ -3,9 +3,13 @@ package httpserver
 import (
 	"clean-code-structure/config"
 	"clean-code-structure/delivery/httpserver/healthhandler"
+	"clean-code-structure/delivery/httpserver/producthandler"
 	"clean-code-structure/logger"
 	"clean-code-structure/service/healthservice"
+	"clean-code-structure/service/productservice"
+	"clean-code-structure/service/transactionservice"
 	"clean-code-structure/validator/healthvalidator"
+	"clean-code-structure/validator/productvalidator"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -16,14 +20,18 @@ type Server struct {
 	config             config.Config
 	Router             *echo.Echo
 	healthcheckHandler healthhandler.Handler
+	productHandler     producthandler.Handler
 }
 
 type RequiredServices struct {
-	HealthService healthservice.Service
+	HealthService      healthservice.Service
+	ProductService     productservice.Service
+	TransactionService transactionservice.Service
 }
 
 type RequiredValidators struct {
-	HealthValidator healthvalidator.Validator
+	HealthValidator  healthvalidator.Validator
+	ProductValidator productvalidator.Validator
 }
 
 func New(config config.Config, services RequiredServices, validators RequiredValidators) Server {
@@ -31,6 +39,7 @@ func New(config config.Config, services RequiredServices, validators RequiredVal
 		Router:             echo.New(),
 		config:             config,
 		healthcheckHandler: healthhandler.New(services.HealthService, validators.HealthValidator),
+		productHandler:     producthandler.New(services.ProductService, validators.ProductValidator),
 	}
 }
 
@@ -79,6 +88,7 @@ func (s Server) Serve() {
 
 	// Routes
 	s.healthcheckHandler.SetRoutes(s.Router.Group("health"))
+	s.productHandler.SetRoutes(s.Router.Group(""))
 
 	// Start server
 	address := fmt.Sprintf(":%d", s.config.HTTPServer.Port)

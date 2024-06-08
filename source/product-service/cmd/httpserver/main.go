@@ -4,8 +4,15 @@ import (
 	"clean-code-structure/config"
 	"clean-code-structure/delivery/httpserver"
 	"clean-code-structure/logger"
+	"clean-code-structure/repository/migrator"
+	"clean-code-structure/repository/pgsql"
+	"clean-code-structure/repository/pgsql/pgsqlproduct"
+	"clean-code-structure/repository/seeder"
 	"clean-code-structure/service/healthservice"
+	"clean-code-structure/service/productservice"
+	"clean-code-structure/service/transactionservice"
 	"clean-code-structure/validator/healthvalidator"
+	"clean-code-structure/validator/productvalidator"
 	"context"
 	"fmt"
 	"log"
@@ -26,7 +33,14 @@ func main() {
 
 	logger.Start(cfg.Logger)
 
+	mgr := migrator.New(cfg.PgSql)
+	mgr.Down()
+	mgr.Up()
+
 	rSvcs, rVal := setupServices(cfg, wg, done)
+
+	sdr := seeder.New(rSvcs)
+	sdr.Seed()
 
 	server := httpserver.New(cfg, rSvcs, rVal)
 	go func() {
@@ -88,9 +102,16 @@ func profiling(cfg config.Config, wg *sync.WaitGroup, done <-chan bool) {
 }
 func setupServices(cfg config.Config, wg *sync.WaitGroup, done chan bool) (requiredServices httpserver.RequiredServices, requiredValidators httpserver.RequiredValidators) {
 
+	pgsqlRepo := pgsql.New(cfg.PgSql)
+
+	productRepo := pgsqlproduct.New(pgsqlRepo)
+
 	requiredValidators.HealthValidator = healthvalidator.New()
+	requiredValidators.ProductValidator = productvalidator.New(productRepo)
 
 	requiredServices.HealthService = healthservice.New()
+	requiredServices.TransactionService = transactionservice.New()
+	requiredServices.ProductService = productservice.New(productRepo, requiredServices.TransactionService)
 
 	return
 }
