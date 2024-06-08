@@ -1,0 +1,59 @@
+services:
+  #PostgresSql Service
+  customer-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    tty: true
+    environment:
+      POSTGRES_DB: customer
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgsqldb:/var/lib/postgresql/data
+  order-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    tty: true
+    environment:
+      POSTGRES_DB: order
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgsqldb:/var/lib/postgresql/data
+  product-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    tty: true
+    environment:
+      POSTGRES_DB: product
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgsqldb:/var/lib/postgresql/data
+
+  #pgadmin Service
+  db_manager:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@test.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${SERVICE_NAME}_db_manager.service=${SERVICE_NAME}_db_manager"
+      - "traefik.http.routers.${SERVICE_NAME}_db_manager.rule=Host(`db_manager.${SERVICE_DOMAIN}`)"
+      - "traefik.http.routers.${SERVICE_NAME}_db_manager.entrypoints=web"
+      - "traefik.http.services.${SERVICE_NAME}_db_manager.loadbalancer.server.port=80"
+
+
+#Volumes
+volumes:
+  pgsqldb:
+    driver: local
+    name: ${SERVICE_NAME}_pgsqldb

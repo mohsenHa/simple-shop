@@ -1,0 +1,21 @@
+services:
+  broker:
+    image: rabbitmq:3-management-alpine
+    domainname: infrastructure_shop
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq/
+      - ./log/:/var/log/rabbitmq
+    ports:
+      - "5672:5672"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${SERVICE_NAME}_rabbitmq_manager.service=${SERVICE_NAME}_rabbitmq_manager"
+      - "traefik.http.routers.${SERVICE_NAME}_rabbitmq_manager.rule=Host(`rabbitmq_manager.${SERVICE_DOMAIN}`)"
+      - "traefik.http.routers.${SERVICE_NAME}_rabbitmq_manager.entrypoints=web"
+      - "traefik.http.services.${SERVICE_NAME}_rabbitmq_manager.loadbalancer.server.port=15672"
+
+
+#Volumes
+volumes:
+  rabbitmq:
+    driver: local

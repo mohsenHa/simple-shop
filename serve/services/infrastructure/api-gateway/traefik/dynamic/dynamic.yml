@@ -1,0 +1,68 @@
+http:
+  # Routers
+  routers:
+    shop_customer:
+      entrypoints: web
+      rule: "Host(`shop.local`) && PathPrefix(`/customer`)"
+      service: shop_customer
+      middlewares:
+        - strip_customer_path
+    shop_order:
+      entrypoints: web
+      rule: "Host(`shop.local`) && PathPrefix(`/order`)"
+      service: shop_order
+      middlewares:
+        - strip_order_path
+    shop_product:
+      entrypoints: web
+      rule: "Host(`shop.local`) && PathPrefix(`/product`)"
+      service: shop_product
+      middlewares:
+        - strip_product_path
+
+  # Services
+  services:
+    shop_customer:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8000"
+    shop_order:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8001"
+    shop_product:
+      loadBalancer:
+        servers:
+          - url: "http://host.docker.internal:8002"
+
+  middlewares:
+    strip_customer_path:
+      stripprefix:
+        prefixes: "/customer"
+    strip_product_path:
+      stripprefix:
+        prefixes: "/product"
+    strip_order_path:
+      stripprefix:
+        prefixes: "/order"
+
+#  services:
+#    shop_order:
+#      loadbalancer:
+#        servers:
+#          port:8000
+#http:
+#  # Routers
+#  routers:
+#    shop_order:
+#      service: shop_order
+#      entrypoints: web
+#      rule: "Host(`shop.local`) && Path(`oder`)"
+#
+#
+#  # Services
+#  services:
+#    shop_order:
+#      loadbalancer:
+#        server:
+#          port:8000

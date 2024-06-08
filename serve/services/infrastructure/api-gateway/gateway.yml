@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  gateway:
+    domainname: infrastructure_shop
+    image: traefik:latest
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - ./traefik:/etc/traefik/
+      - /var/run/docker.sock:/var/run/docker.sock
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
