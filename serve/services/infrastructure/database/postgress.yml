@@ -11,7 +11,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgsqldb:/var/lib/postgresql/data
+      - customer_pgsqldb:/var/lib/postgresql/data
   order-db:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -23,7 +23,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - pgsqldb:/var/lib/postgresql/data
+      - order_pgsqldb:/var/lib/postgresql/data
   product-db:
     image: postgres:16-alpine
     restart: unless-stopped
@@ -35,7 +35,7 @@ services:
     ports:
       - "5434:5432"
     volumes:
-      - pgsqldb:/var/lib/postgresql/data
+      - product_pgsqldb:/var/lib/postgresql/data
 
   #pgadmin Service
   db_manager:
@@ -43,7 +43,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@test.com
       PGADMIN_DEFAULT_PASSWORD: password
-    restart: always
+    restart: unless-stopped
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${SERVICE_NAME}_db_manager.service=${SERVICE_NAME}_db_manager"
@@ -54,6 +54,12 @@ services:
 
 #Volumes
 volumes:
-  pgsqldb:
+  customer_pgsqldb:
     driver: local
-    name: ${SERVICE_NAME}_pgsqldb
+    name: ${SERVICE_NAME}_customer_pgsqldb
+  order_pgsqldb:
+    driver: local
+    name: ${SERVICE_NAME}_order_pgsqldb
+  product_pgsqldb:
+    driver: local
+    name: ${SERVICE_NAME}_product_pgsqldb

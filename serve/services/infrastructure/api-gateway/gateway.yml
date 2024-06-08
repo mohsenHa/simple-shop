@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   gateway:
     domainname: infrastructure_shop
