@@ -14,7 +14,7 @@ type Service struct {
 }
 
 type ProductRepository interface {
-	GetProductWithId(ctx context.Context, id uint) (productparam.ProductRepo, error)
+	GetProductWithId(ctx context.Context, id int) (productparam.ProductRepo, error)
 	StoreWitTransaction(ctx context.Context, transaction pgsql.Transaction, product entity.Product) (uint, error)
 }
 

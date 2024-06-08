@@ -6,11 +6,12 @@ import (
 
 type GetRequest struct {
 	param.BaseRequest
-	ProductId uint `param:"id"`
+	ProductId int `param:"id"`
 }
 
 type GetResponse struct {
 	param.BaseResponse
-	ProductId uint   `json:"product_id"`
+	ProductId int    `json:"product_id"`
 	Name      string `json:"name"`
+	Quantity  int    `json:"quantity"`
 }

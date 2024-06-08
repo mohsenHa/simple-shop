@@ -88,7 +88,7 @@ func (s Server) Serve() {
 
 	// Routes
 	s.healthcheckHandler.SetRoutes(s.Router.Group("health"))
-	s.productHandler.SetRoutes(s.Router.Group(""))
+	s.productHandler.SetRoutes(s.Router.Group("product"))
 
 	// Start server
 	address := fmt.Sprintf(":%d", s.config.HTTPServer.Port)

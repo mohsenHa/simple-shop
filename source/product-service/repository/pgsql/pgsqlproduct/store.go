@@ -18,7 +18,7 @@ func (d *DB) StoreWitTransaction(ctx context.Context, transaction pgsql.Transact
 		return 0, richerror.New(op).WithErr(err).WithKind(richerror.KindUnexpected)
 	}
 
-	query := `INSERT INTO products(name) VALUES ($1) RETURNING id`
+	query := `INSERT INTO products(name,quantity) VALUES ($1,$2) RETURNING id`
 	stmt, err := tx.Prepare(query)
 	if err != nil {
 		return 0, richerror.New(op).WithErr(err).WithKind(richerror.KindUnexpected)
@@ -32,7 +32,7 @@ func (d *DB) StoreWitTransaction(ctx context.Context, transaction pgsql.Transact
 	}(stmt)
 
 	var id uint
-	err = stmt.QueryRow(product.Name).Scan(&id)
+	err = stmt.QueryRow(product.Name, product.Quantity).Scan(&id)
 	if err != nil {
 		return 0, richerror.New(op).WithErr(err).WithKind(richerror.KindUnexpected)
 	}

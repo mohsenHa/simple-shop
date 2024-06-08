@@ -25,7 +25,8 @@ func (s Seeder) productSeeder() {
 		BaseRequest: param.BaseRequest{
 			Ctx: context.Background(),
 		},
-		Name: "product-test",
+		Name:     "product-test",
+		Quantity: 100,
 	})
 	if err != nil {
 		panic(err)

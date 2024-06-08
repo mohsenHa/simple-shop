@@ -17,6 +17,7 @@ func (s Service) Get(req productparam.GetRequest) (productparam.GetResponse, err
 	return productparam.GetResponse{
 		ProductId: product.Entity.Id,
 		Name:      product.Entity.Name,
+		Quantity:  product.Entity.Quantity,
 	}, nil
 
 }

@@ -35,7 +35,7 @@ func (v Validator) ValidateGetRequest(req productparam.GetRequest) (map[string]s
 }
 
 func (v Validator) isProductIdValid(value interface{}) error {
-	productId := value.(uint)
+	productId := value.(int)
 
 	if isExist, err := v.productRepo.IsProductExist(context.Background(), productId); err != nil || !isExist {
 		if err != nil {

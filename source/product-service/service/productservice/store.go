@@ -12,7 +12,8 @@ func (s Service) Store(req productparam.StoreRequest) (productparam.StoreRespons
 	transaction := s.transactionSvc.NewTransaction()
 
 	id, errGPWI := s.productRepo.StoreWitTransaction(req.Ctx, transaction, entity.Product{
-		Name: req.Name,
+		Name:     req.Name,
+		Quantity: req.Quantity,
 	})
 	if errGPWI != nil {
 		transaction.Rollback()
@@ -23,5 +24,6 @@ func (s Service) Store(req productparam.StoreRequest) (productparam.StoreRespons
 	return productparam.StoreResponse{
 		ProductId: id,
 		Name:      req.Name,
+		Quantity:  req.Quantity,
 	}, nil
 }

@@ -1,6 +1,7 @@
 package entity
 
 type Product struct {
-	Id   uint
-	Name string
+	Id       int
+	Name     string
+	Quantity int
 }

@@ -3,19 +3,19 @@ http:
   routers:
     shop_customer:
       entrypoints: web
-      rule: "Host(`shop.local`) && PathPrefix(`/customer`)"
+      rule: "Host(`shop.local`) && PathPrefix(`/c`)"
       service: shop_customer
       middlewares:
         - strip_customer_path
     shop_order:
       entrypoints: web
-      rule: "Host(`shop.local`) && PathPrefix(`/order`)"
+      rule: "Host(`shop.local`) && PathPrefix(`/o`)"
       service: shop_order
       middlewares:
         - strip_order_path
     shop_product:
       entrypoints: web
-      rule: "Host(`shop.local`) && PathPrefix(`/product`)"
+      rule: "Host(`shop.local`) && PathPrefix(`/p`)"
       service: shop_product
       middlewares:
         - strip_product_path
@@ -38,13 +38,13 @@ http:
   middlewares:
     strip_customer_path:
       stripprefix:
-        prefixes: "/customer"
+        prefixes: "/c"
     strip_product_path:
       stripprefix:
-        prefixes: "/product"
+        prefixes: "/p"
     strip_order_path:
       stripprefix:
-        prefixes: "/order"
+        prefixes: "/o"
 
 #  services:
 #    shop_order:
