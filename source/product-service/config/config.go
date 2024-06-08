@@ -2,6 +2,7 @@ package config
 
 import (
 	"clean-code-structure/logger"
+	"clean-code-structure/repository/pgsql"
 	"clean-code-structure/scheduler"
 )
 
@@ -20,4 +21,5 @@ type Config struct {
 	HTTPServer  HTTPServer       `koanf:"http_server"`
 	Scheduler   scheduler.Config `koanf:"scheduler"`
 	Logger      logger.Config    `koanf:"logger"`
+	PgSql       pgsql.Config     `koanf:"pgsql"`
 }
