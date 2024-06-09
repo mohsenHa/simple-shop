@@ -45,7 +45,6 @@ func New(config config.Config, services RequiredServices, validators RequiredVal
 
 func (s Server) Serve() {
 	// Middleware
-
 	s.Router.Use(middleware.RequestID())
 
 	s.Router.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
