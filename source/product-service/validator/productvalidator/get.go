@@ -10,7 +10,7 @@ import (
 )
 
 func (v Validator) ValidateGetRequest(req productparam.GetRequest) (map[string]string, error) {
-	const op = "messagevalidator.ValidateSampleRequest"
+	const op = "messagevalidator.ValidateGetRequest"
 
 	if err := validation.ValidateStruct(&req, validation.Field(&req.ProductId,
 		validation.Required,

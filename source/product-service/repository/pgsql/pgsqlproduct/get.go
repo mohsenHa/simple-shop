@@ -8,7 +8,6 @@ import (
 	"clean-code-structure/repository/pgsql"
 	"context"
 	"database/sql"
-	"fmt"
 	"time"
 )
 
@@ -17,7 +16,6 @@ func (d *DB) GetProductWithId(ctx context.Context, id int) (productparam.Product
 	row := d.conn.Conn().QueryRowContext(ctx, `SELECT * FROM products WHERE Id = $1`, id)
 	product, err := scanProduct(row)
 	if err != nil {
-		fmt.Println(err)
 		return productparam.ProductRepo{}, richerror.New(op).WithErr(err).
 			WithMessage(errmsg.ErrorMsgCantScanQueryResult).WithKind(richerror.KindUnexpected)
 	}
@@ -38,6 +36,25 @@ func (d *DB) IsProductExist(ctx context.Context, id int) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (d *DB) GetTotalProductCount(ctx context.Context, filters ...entity.Filter) (int, error) {
+	const op = "pgsqlproduct.GetTotalProductCount"
+
+	query, values := d.conn.MakeQueryWithFilters(filters)
+	if query != "" {
+		query = " WHERE " + query
+	}
+	row := d.conn.Conn().QueryRowContext(ctx, `SELECT COUNT(*) as total FROM products `+query, values...)
+	var total int
+	err := row.Scan(&total)
+
+	if err != nil {
+		return 0, richerror.New(op).WithErr(err).
+			WithMessage(errmsg.ErrorMsgCantScanQueryResult).WithKind(richerror.KindUnexpected)
+	}
+
+	return total, nil
 }
 
 func scanProduct(scanner pgsql.Scanner) (productparam.ProductRepo, error) {

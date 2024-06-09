@@ -48,11 +48,11 @@ func New(config Config) *PGSQLDB {
 	}
 }
 
-func (m *PGSQLDB) Conn() *sql.DB {
-	return m.db
+func (p *PGSQLDB) Conn() *sql.DB {
+	return p.db
 }
 
-func (m *PGSQLDB) WaitForTransaction(ctx context.Context, transaction Transaction, tx *sql.Tx) {
+func (p *PGSQLDB) WaitForTransaction(ctx context.Context, transaction Transaction, tx *sql.Tx) {
 	go func() {
 		for {
 			select {

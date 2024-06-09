@@ -14,10 +14,6 @@ func (s Service) Get(req productparam.GetRequest) (productparam.GetResponse, err
 			WithMeta(map[string]interface{}{"product_id": req.ProductId})
 	}
 
-	return productparam.GetResponse{
-		ProductId: product.Entity.Id,
-		Name:      product.Entity.Name,
-		Quantity:  product.Entity.Quantity,
-	}, nil
+	return productparam.GetResponse{Product: &product}, nil
 
 }

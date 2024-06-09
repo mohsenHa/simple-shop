@@ -11,7 +11,5 @@ type GetRequest struct {
 
 type GetResponse struct {
 	param.BaseResponse
-	ProductId int    `json:"product_id"`
-	Name      string `json:"name"`
-	Quantity  int    `json:"quantity"`
+	Product *ProductRepo `json:"product"`
 }

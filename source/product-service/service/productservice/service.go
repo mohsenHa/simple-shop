@@ -16,6 +16,7 @@ type Service struct {
 type ProductRepository interface {
 	GetProductWithId(ctx context.Context, id int) (productparam.ProductRepo, error)
 	StoreWitTransaction(ctx context.Context, transaction pgsql.Transaction, product entity.Product) (uint, error)
+	GetListProducts(ctx context.Context, page int, prePage int, filters ...entity.Filter) (products []productparam.ProductRepo, hasMore bool, err error)
 }
 
 func New(
