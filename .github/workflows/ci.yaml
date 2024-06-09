@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, ready_for_review]
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+      - name: Install dependencies
+        run: |
+          cd source/customer-service
+          go mod tidy
+          cd ../order-service
+          go mod tidy
+          cd ../product-service
+          go mod tidy
+          
+
+      - name: Test
+        run: |
+          cd source/customer-service
+          make test
+          cd ../order-service
+          make test
+          cd ../product-service
+          make test
+
+      - name: Format
+        run: |
+          cd source/customer-service
+          make format
+          cd ../order-service
+          make format
+          cd ../product-service
+          make format
+
+      - name: Lint
+        run: |
+          cd source/customer-service
+          make lint
+          cd ../order-service
+          make lint
+          cd ../product-service
+          make lint
