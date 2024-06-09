@@ -25,28 +25,10 @@ jobs:
           
 
       - name: Test
-        run: |
-          cd ../customer-service
-          make test
-          cd ../order-service
-          make test
-          cd ../product-service
-          make test
+        run: make test
 
       - name: Format
-        run: |
-          cd ../customer-service
-          make format
-          cd ../order-service
-          make format
-          cd ../product-service
-          make format
+        run: make format
 
       - name: Lint
-        run: |
-          cd ../customer-service
-          make lint
-          cd ../order-service
-          make lint
-          cd ../product-service
-          make lint
+        run: make lint
