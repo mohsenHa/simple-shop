@@ -17,7 +17,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"sync"
@@ -28,12 +27,16 @@ func main() {
 	wg := &sync.WaitGroup{}
 	done := make(chan bool)
 
-	cfg := config.Load("config.yml")
+	cfg, err := config.Load("config.yml")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Printf("cfg: %+v\n", cfg)
 
 	logger.Start(cfg.Logger)
 
-	mgr := migrator.New(cfg.PgSql)
+	mgr := migrator.New(cfg.PgSQL)
 	mgr.Down()
 	mgr.Up()
 
@@ -76,7 +79,10 @@ func main() {
 
 func profiling(cfg config.Config, wg *sync.WaitGroup, done <-chan bool) {
 	fmt.Printf("Profiling enabled on port %d", cfg.Application.ProfilingPort)
-	srv := &http.Server{Addr: fmt.Sprintf(":%d", cfg.Application.ProfilingPort)}
+	srv := &http.Server{
+		Addr:              fmt.Sprintf(":%d", cfg.Application.ProfilingPort),
+		ReadHeaderTimeout: time.Duration(cfg.Application.TimeoutSeconds) * time.Second,
+	}
 	wg.Add(1)
 
 	go func() {
@@ -88,21 +94,18 @@ func profiling(cfg config.Config, wg *sync.WaitGroup, done <-chan bool) {
 	}()
 
 	go func() {
-		for {
-			select {
-			case <-done:
-				ctx, cancel := context.WithTimeout(context.Background(), time.Duration(5)*time.Second)
-				defer cancel()
-				if err := srv.Shutdown(ctx); err != nil {
-					panic(err)
-				}
-			}
+		<-done
+		ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.Application.TimeoutSeconds)*time.Second)
+		defer cancel()
+		if err := srv.Shutdown(ctx); err != nil {
+			panic(err)
 		}
 	}()
 }
+
 func setupServices(cfg config.Config, wg *sync.WaitGroup, done chan bool) (requiredServices httpserver.RequiredServices, requiredValidators httpserver.RequiredValidators) {
 
-	pgsqlRepo := pgsql.New(cfg.PgSql)
+	pgsqlRepo := pgsql.New(cfg.PgSQL)
 
 	productRepo := pgsqlproduct.New(pgsqlRepo)
 
@@ -113,5 +116,5 @@ func setupServices(cfg config.Config, wg *sync.WaitGroup, done chan bool) (requi
 	requiredServices.TransactionService = transactionservice.New()
 	requiredServices.ProductService = productservice.New(productRepo, requiredServices.TransactionService)
 
-	return
+	return requiredServices, requiredValidators
 }

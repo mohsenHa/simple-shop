@@ -5,6 +5,7 @@ application:
   graceful_shutdown_timeout_in_seconds: 10
   profiling_port: 1002
   enable_profiling: true
+  timeout_seconds: 5
 
 http_server:
   port: 8002

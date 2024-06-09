@@ -10,6 +10,7 @@ type Application struct {
 	GracefulShutdownTimeoutInSecond int  `koanf:"graceful_shutdown_timeout_in_seconds"`
 	EnableProfiling                 bool `koanf:"enable_profiling"`
 	ProfilingPort                   int  `koanf:"profiling_port"`
+	TimeoutSeconds                  int  `koanf:"timeout_seconds"`
 }
 
 type HTTPServer struct {
@@ -21,5 +22,5 @@ type Config struct {
 	HTTPServer  HTTPServer       `koanf:"http_server"`
 	Scheduler   scheduler.Config `koanf:"scheduler"`
 	Logger      logger.Config    `koanf:"logger"`
-	PgSql       pgsql.Config     `koanf:"pgsql"`
+	PgSQL       pgsql.Config     `koanf:"pgsql"`
 }
