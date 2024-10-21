@@ -1,1 +1,0 @@
-docker compose -p shop-infrastructure --env-file ./.env -f ./serve/services/infrastructure/api-gateway/gateway.yml -f ./serve/services/infrastructure/database/postgress.yml -f ./serve/services/infrastructure/message-broker/broker.yml %*
